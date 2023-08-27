@@ -1,0 +1,15 @@
+.text
+	li $t0, 32 
+	li $t1, 5
+	srl $s2,$t0,3
+	div $t0,$t1
+	#parte inteira e colocar em s0
+	mflo $s0
+	#resto está em s1
+	mfhi $s1
+	
+	li $v0,1
+	
+	syscall
+	
+	

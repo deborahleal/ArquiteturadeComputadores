@@ -1,0 +1,26 @@
+#escreva um programa que lê uma idade e a imprimi, no formato 
+#abaixo: forneça sua idade: e sua idade é: 
+.data
+	saudacao: .asciiz "forneça sua idade: "
+	resposta: .asciiz "sua idade é: "
+.text
+	#IMPRIMIR A SAUDACAO
+	li $v0,4 # imprimir uma string 
+	#a string tem que ta em a0
+	la $a0, saudacao
+	syscall
+	# QUANDO O USUARIO RESPONDER 
+	li $v0,5 #leiura de inteiros
+	syscall
+	
+	# IMPRIMIR A RESPOSTA
+	move $t0,$v0 # copia para não perder, e coloca em t pois é temporario
+	li $v0,4 
+	la $a0, resposta
+	syscall
+	
+	li $v0,1
+	move $a0, $t0
+	syscall
+	
+	

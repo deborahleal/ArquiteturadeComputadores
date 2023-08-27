@@ -1,0 +1,53 @@
+# lê um numero inteiro e imprimi se ele ´emaior, menor ou igual a zero 
+.data
+	msg: .asciiz " Digite um número inteiro"
+	maior: .asciiz " Esse número é maior que zero"
+	menor: .asciiz " Esse número é menor que zero"
+	igual: .asciiz "Esse número é o zero"
+	dado: .space 25
+	
+.text
+	#imprimir a string msg
+	li $v0,4
+	la $a0, msg
+	syscall
+	
+	# leitura de string 
+	#li $v0,8
+	#la $a1, dado
+	#syscall
+	
+	move $t0,$a0
+	
+	beq $t0, $zero, imprimiIgual
+	
+	bgt $t0, $zero, imprimirMaior
+	blt $t0,$zero, imprimirMenor
+	
+	
+	imprimiIgual:
+		li $v0,4
+		la $a0, igual
+		syscall
+		
+		li $v0,10
+		syscall
+		
+	imprimirMaior:
+		li $v0,4
+		la $a0, maior
+		syscall
+		
+		li $v0,10
+		syscall
+		
+	imprimirMenor: 
+		li $v0,4
+		la $a0, menor
+		syscall
+		
+		li $v0,10
+		syscall
+	
+	
+	

@@ -1,0 +1,29 @@
+# com array de inteiros com 4 posi
+.data
+	myArray: 
+		.aling 2 
+		.space 16
+.text
+	move $t0, $zero
+	move $t1,$zero
+	li $t2,16
+	
+	while:
+		beq $t0,$t2, saiWhile
+		sw $t1, myArray ($t0)
+		addi $t0,$t0,4
+		addi $t1,$t1,1
+		j while
+		
+	saiWhile:
+		move $t0, $zero
+		imprimi: 
+			beq $t0,$t2, saiDaImpressao
+			li $v0,1 
+			lw $a0, myArray ($t0)
+			syscall
+			
+			addi $t0,$t0,4
+			j imprimi
+		saiDaImpressao:
+		

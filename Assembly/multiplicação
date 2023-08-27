@@ -1,0 +1,12 @@
+#multiplicação de inteiros
+.text
+	li $t0,4 #atribuindo valor
+	li $t1,5 #atribuindo valor 
+	mul $s0,$t1,$t0 # s0 = t1 * t0
+	mul $s1, $s0, 3 # s1 = s0 * 3
+	
+	li $s1,1 # imprimir o inteiro s1, esse 1 é pq é um inteiro 
+	move $a0, $s1 # mas tem que mandar esse resultado pro a0, TABELA ?
+	syscall
+	
+	

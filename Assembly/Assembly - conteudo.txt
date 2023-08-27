@@ -1,0 +1,206 @@
+- instrução é uma palavra da linguagem.
+- ISA MIPS:
+ - instruções possuem até 3 operandos - todos são registradores
+ - ISA = Instruction Set Archietecture
+ - No MIPS, os operandos das instruções são registradores 
+ - Há 32 registradores de 32 bits, cada.
+ - um registradore possui o simbolo $ antecedendo o seu nome
+ - exemplo: 
+    - programa em C: 
+         f = (g + h) - (i+j)
+    - Assembly: 
+         add $t0,$s1,$s2 ( somando s1 com s2 e colocando t0 )
+         add $t1,$s3,$s4
+         sub  $s0,$t0, $t1
+ - Load e Store:
+  - Load: instrução de movimentação de dados da memória para o registrador
+    - operação de leitura da memoria
+  - Store: instrução de movimentação de dados do registrador para a memória.
+    - operação de escrita na memoria.
+ - Move:
+  - instrução para passar o conteudo de um registrador para outro registrador
+   - memoria ram não é envolvida 
+- Registradores:
+ - $zero: constante 0
+ - $v0, $v1 - retornam resultados de funções
+ - $a0,$a1,$a2,$a3 - argumentos de funções ( parametros de funções ) 
+ - $ra - return address ( endereço de retorno de uma função ) 
+ - $t1 a $t9 - registradores temporarios, que podem ser modificados por funções
+ - $s1 a $s8 - similar ao de cima, mas salvam os valores. 
+
+ COMANDO | SIGNIFICADO 
+ li$v0,1 | imprimir inteiro
+ li$v0,2 | imprimir float
+ li$v0,3 | imprimir double
+ li$v0,4 | imprimir string ou char
+ li$v0,5 | ler inteiro
+ li$v0,6 | ler float
+ li$v0,7 | ler double
+ li$v0,8 | ler string ou char
+li$v0,10 | encerrar programa principal
+
+áreas: 
+ .data: especificações de variaveis, lida com dados na memoria princiapl
+    - .word : inteiro 
+    - .asciiz : string 
+ .text: coloca as instruções 
+     - quando for imprimir: 
+       - imprimir uma cadeia de caracteres coloca la $a0, o que vc quer imprimir 
+       - imprimir inteiro coloca lw, $a0, o que vc quer imprimir 
+
+adição de inteiros:
+ add $t0,$t1,$t2
+ addi $t0,$t1, 15 ( usando quando tem um valor inteiro ) 
+
+Subtraçao de inteiros: 
+ sub $t0, $t1, $s0
+ subi $t0, $t1, 15
+
+Multiplicação de inteiros:
+ mul $s0,$t0,$t1
+ - multiplicação por potências de dois: 
+   - basta realizar a operação de shift left, que significa mover os bits para a esquerda 
+   - se movermso os bits de um número binario uma casa para a esquerda, multiplicamos por 2; no entanto se movermos duas casas, multiplica por 4 
+   - portanto, se movermos os bits de um numero binario n vezes para a esquerda, multiplica por 2 *n
+    - instrução: sll $t0,$t1,n ( faz com que t1 n casas para esquerda e seja armazenado em t0 )
+
+Divisão por inteiros:
+ div $t0, $t1 ( realiza a divisão de t0/ti ) 
+ 	- a parte inteira ( resposta ) vai pra lo( não é um registrador ) 
+	- resto vai pra hi ( não é um registrador ) 
+ mflo $s0 ( move o conteudo de lo pra $s0 ) 
+ mfhi $s1  ( move o conteudo de hi pra $s1 ) 
+	- para dividir por uma potencia de 2, fica: 
+		- srl $s2, $s2, 2 ( pra onde vai, onde tá e n ( 2^n))
+
+Leitura de inteiros:
+	 - realizamos a instrução li $v0, 4
+	 - ao dar syscall, o valor lido fica armazenado em $v0, qu epode ser usado como quisermos 
+		- geralmente, o passamos para um registrador temporario a instrução move 
+	 - .data:
+		- coloca o que vc quer perguntar ao usuario 
+	 - text: 
+		- li $v0, 4 ( vai imprimir uma string, o qu evc pergunta ) 
+		- la $a0, variavel da RAM ( pra onde vai ) 
+		- syscall
+		- li $v0, 5 ( leitura do inteiro )
+		- syscall
+		- tem que mover de $v0 pra uma temporario, para que o valor da pergunta ficar salva 
+
+Leitura de Strings:
+	- em .data, declaramos a string e o seu tamanho: 
+		- usamos .space para o numero de bytes I( tamanho ) -> tem que ser uma variavel a parte
+	- .text:
+		- realizamos a instrução li, $v0, 8
+		- la $a0, variavelDaRAM
+		- la $a1, VariavelDoTamanhoDaString
+	- ao dar syscall, o valor lido fica armazenado em $a0
+
+Leitura e escrita de floar e double: 
+	 - números representados com casas decimais: 
+	 
+		- FLOAT:
+			- 32 bits
+			- um unico registrador do coprocessador I
+			- usa-se os $f0 - $f31
+			- imprimir float (  li $v0, 2 ) 
+			- ler float ( li $v0,6 )
+			- so vai conseguir ser impresso em $f12
+			- NÃO CONSEGUE FAZER UM MOVE DIRETO, O QUE FAZ: 
+				- .data: zero: .float 0.0
+				- text: lwc1 $f1, zero
+	                        	add.s $f12, $f1, $f0
+
+		- DOUBLE:
+			- 64 bits
+			- dois registradores do coprocessador I
+			- utiliza-se os registradores pares 
+			- Leitura: $v0,7
+			- escrita/impressao:$v0,3
+			- NÃO CONSEGUE FAZER UM MOVE DIRETO, O QUE FAZ: 
+				- .data: zero: .double 0.0
+				- text: ldc1 $f1, zero
+	                       		 add.d $f12, $f1, $f0
+
+Comandos condicionais: 
+	- label é um rótulo qualquer
+
+COMANDO            |  SIGNIFICADO
+
+beq $t1,$t2, label |  Se $t1 for igual a $t2, execute a partir do rótulo label 
+bne $t1,$t2, label |  Se $t1 for diferente a $t2, execute a partir do rótulo label
+blt $t1,$t2, label |  Se $t1 for menor a $t2, execute a partir do rótulo label
+bgt $t1,$t2, label |  Se $t1 for maior a $t2, execute a partir do rótulo label
+ble $t1,$t2, label |  Se $t1 for menos ou igual a $t2, execute a partir do rótulo label
+bge $t1,$t2, label |  Se $t1 for maior ou igual a $t2, execute a partir do rótulo label
+
+
+Laços de repetição - WHILE
+	- os laços de repetição em assembly são combinações de ifs e jumps ( saltos incondicionais, que vc pule para determinada linha de código ). Para implementar um loop, teremos pelo menos dois rótulos: um para manter o loop, e outro para sair 
+		exemplo:
+			While: antes do laço começar 
+				aqui vao os comandos que serão executados no loop
+			saida: no final do laço
+				aqui vao os comandos depois que o loop terminar 
+	- transposição de um código: 
+		- EM C:
+			int i = 0; (1)
+			while(i<10){ (2)
+				i++
+			}
+			print("%d%, &i); (3)
+		- Em assembly:
+
+			.text
+				move $t0,$zero (1)
+
+				while: (2) -> pensa na condição que faz sair do laço 
+					beq $t0,10,saida
+					addi $t0,$t0,1
+					j while
+				saida: (3)
+					li $v0,1
+					move $a0, $t0
+					syscall
+
+Funções: 
+	- no ponto .text tem uma função implicita, que é a main 
+	- IMPORTANTE:
+		- jal: chamar a função. realiza para algum rotulo de função e permite a volta à chamada pelo registrador $ra
+		- jr $ra volta para quem chamou a função  
+	- PARAMETROS E RETORNO: 
+		- $a0 a $a3: argumentos de funçõe, ou seja, valores que passamos como paramentros a qualquer função do programa.
+			- se precisar de mais argumentos coloca na memoria RAM
+		- $v0 e $v1: return de funções, ou seja, valores que retornamos 
+
+
+Arrays ( vetores ):
+ - coleção de dados de um mesmo tipo, que são armazenados em espaçõs coníguos da memória RAM 
+ - Devemos alocar espaço em nosso array previamente
+	- o espaço nunca será mudado ao longo do programa
+	- tamanhos de cada tipo em assemby mips 
+		WORD     | 32 bits ( 4B )
+		BYTE     | 8 bits (1B)
+		INTEGER  | 32 bits ( 4B )
+		CHARACTER| 4 bits ( 0,5B )
+	- exemplo: para criar um array de 100 inteiros, precisamos alocas 400B de memória RAM, pois cada inteiro precisa de 4B 
+
+- declaração em assemby: 
+	 - a alocação ocorre na seção .data
+		.data
+			myArray:
+				.align 2 ( alinhar a palavra na posição correta, e esse 2 é pra indicar que é de inteiros) 
+				.space 16 ( não é o tamanho dos inteiros e sim o tamanho do espaço que esse array vai ficar, como o inteiro tem 4B, então quer dizer que no ex é um inteiro de 4 inteiros ) 
+
+- lw ( load ) : lê um conteúdo da RAM e o coloca em um registrador da CPU.
+	- sintaxe: 
+		lw $s0, myArray($zero) -> registrador, nome do array e a posição do array ( deve estar no registrador ) 
+		- coloque o conteúdo do registrador $s0 na primeira posição do myArray
+
+- sw ( store ) : escreve o conteúdo de um registrador da CPU na RAM.
+	 - sintaxe: 
+		sw $s0, myArray($zero) -> registrador, nome do array e a posição do array ( deve estar no registrador ) 
+		- coloque o conteúdo do registrador $s0 na primeira posição do myArray
+
+
+Manipulação de arquivos de texto ( leitura de dados )

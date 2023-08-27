@@ -1,0 +1,48 @@
+# escreva uma função que verifica se um numero positivo é par ou impar
+.data
+	msg: .asciiz " Forneça um núemro positivo: "
+	par: .asciiz "Esse número é par :)"
+	impar:.asciiz "Esse número é impar :)"
+.text
+	.main
+	la $a0, msg
+	jal imprimiString 
+	jal lerNumeroInteiro
+	
+	
+	move $a0, $v0
+	jal ehimpar
+	beq $v0, $zero, imprimiPar
+	la $a0, impar
+	jal imprimiString
+	
+	
+
+	
+	imprimiPar: 
+		la, $a0, par
+		jal imprimiString
+		jal encerraPrograma	
+	
+	
+	imprimiString:
+		li $v0,4
+		syscall
+		jr $ra
+		
+		
+	ehimpar:
+		li $t0,2
+		div $a0,$t0
+		mfhi $v0
+		jr $ra
+		jal encerraPrograma
+		
+	lerNumeroInteiro:
+		li $v0,5
+		syscall
+		jr $ra
+		
+	encerraPrograma:
+		li $v0,10
+		syscall

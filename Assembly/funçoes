@@ -1,0 +1,15 @@
+.data 
+	meuNome: .asciiz "Olá, turma. \nMeu nome é Déborah"
+	
+.text
+	.main:
+	
+	la $a0, meuNome
+	jal imprimi
+	#li $v0,10
+	syscall
+	
+	imprimi:
+		li $v0, 4
+		syscall
+		jr $ra

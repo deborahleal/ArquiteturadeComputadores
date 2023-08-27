@@ -1,0 +1,28 @@
+# escreva um prog qu ele um numero inteirp positivo e imprimi todos os numeros inteiros de
+# zero ate o numero lido
+# exemplo -> entrada: 7 (01234567 )
+.data
+	numero: .byte ' '
+.text
+	# leitura da .data, mas ele não é registrador, tem que passar ( t0 ) 
+	li $v0,5
+	syscall
+	
+	move $t0, $v0
+	
+	move $t1,$zero #i = 0 
+	
+	while:
+		bgt $t1,$t0,saida
+		# imprimir o inteiro 
+		li $v0,1
+		move $a0, $t1
+		syscall
+		#imprimir o espaço em branco pra nao aparecer colado 
+		li $v0, 4
+		la $a0, numero
+		syscall
+		
+		addi $t1, $t1,1
+		j  while
+	saida:

@@ -1,0 +1,23 @@
+# implementar um programa que le um float e o imprimi 
+.data 
+	valor:.asciiz " Digite um valor em decimal: "
+	zero: .double 0.0
+	
+.text
+	#impressao de string
+	li $v0, 4
+	la $a0, valor
+	syscall
+	
+	#lendo o numero em decima
+	li $v0,7
+	syscall #vai pra f0
+	
+	#passando fo pra f12 ( pra ser impresso ) 
+	ldc1 $f2, zero
+	add.d $f12, $f1, $f0
+	
+	# imprimindo o numero
+	li $V0,3
+	syscall
+	
